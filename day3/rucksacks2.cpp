@@ -50,6 +50,7 @@ int main(int ac, char **av)
 		getline(input, line3);
 		sum += getPriority(line1, line2, line3);
 	}
+	input.close();
 	std::cout << sum << '\n';
 	return 0;
 }

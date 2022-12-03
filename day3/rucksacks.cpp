@@ -39,6 +39,7 @@ int main(int ac, char **av)
 		getline(input, line);
 		sum += getPriority(line);
 	}
+	input.close();
 	std::cout << sum << '\n';
 	return 0;
 }
