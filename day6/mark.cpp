@@ -1,41 +1,40 @@
 #include <iostream>
 #include <fstream>
 
-bool	isOk(const std::string &str)
+bool	checkLastChar(const std::string &str, int &count)
 {
-	if (str.size() < 4)
-		return false;
-	
-	for (int i = 0; i < 3; ++i)
+	for (int i = 1; i <= count; ++i)
 	{
-		for (int j = i + 1; j < 4; ++j)
+		if (*(str.rbegin()) == *(str.rbegin() + i))
 		{
-			if (*(str.rbegin() + i) == *(str.rbegin() + j))
-				return false;
+			count = i;
+			return false;
 		}
 	}
+	++count;
+	if (count < 4)
+		return false;
 	return true;
 }
 
-int	getChars(char *av, std::string &input)
+int	getChars(char *av)
 {
 	std::ifstream	ifs;
 	char			buff;
 	int				count = 0;
 
-	input.clear();
+	std::string	tool;
 	ifs.open(av, std::ifstream::in);
 	if (ifs.fail())
 		return (1);
 	ifs.get(buff);
 	while (ifs.good())
 	{
-		count++;
-		input.append(&buff, 1);
-		if (isOk(input))
+		tool.append(&buff, 1);
+		if (checkLastChar(tool, count))
 		{
 			ifs.close();
-			return (count);
+			return (tool.size());
 		}
 		ifs.get(buff);
 	}
@@ -48,9 +47,13 @@ int main(int ac, char **av)
 	if (ac != 2)
 		return 1;
 	
-	std::string	tool;
-	int result = getChars(av[1], tool);
+	int result = getChars(av[1]);
+	if (result == 1)
+		return 1;
 
-	std::cout << result << '\n';
+	if (!result)
+		std::cout << "No mark found in this array\n";
+	else
+		std::cout << "Mark found at position " << result << ".\n";
 	return 0;
 }
