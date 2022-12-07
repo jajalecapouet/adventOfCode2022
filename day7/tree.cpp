@@ -77,7 +77,8 @@ int main(int ac, char **av)
 	{
 		line.clear();
 		getline(input, line);
-		line.erase(--line.end()); // boring subject's input behaviour correction
+		if (line.back() == 13)
+			line.erase(--line.end()); // boring subject's input behaviour correction
 		if (!line.compare(0, 3, "$ c"))
 		{
 			std::string	cd(line.substr(5));
@@ -102,6 +103,6 @@ int main(int ac, char **av)
 	int	result = 0;
 	current = root;
 	findLowSize(current, result);
-	std::cout << root->trueSize << std::endl;
+	std::cout << result << std::endl;
 	delete (root);
 }
