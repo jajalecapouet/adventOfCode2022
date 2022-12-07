@@ -91,7 +91,7 @@ int main(int ac, char **av)
 				current = current->father;
 			}
 			else
-				current = current->dirs[line.substr(5)];
+				current = current->dirs[cd];
 		}
 		else if (!line.compare(0, 3, "$ l"))
 			continue;
