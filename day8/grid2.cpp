@@ -2,113 +2,85 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include <utility>
 
-int	countFromTop(std::vector<std::vector<std::pair<short, bool> > > &grid)
+int	upRange(std::vector<std::vector<short> >::const_iterator itR, int idx, const std::vector<std::vector<short> > &grid)
 {
-	int																count = 0;
-	std::vector<std::vector<std::pair<short, bool> > >::iterator	endR(grid.end());
-
-	for (int idx = 0; idx < grid[0].size(); ++idx) {
-		short	taller = -1;
-		for (std::vector<std::vector<std::pair<short, bool> > >::iterator itR(grid.begin()); itR != endR; ++itR)
-		{
-			if (taller == 9)
-				break;
-			if (itR->at(idx).first > taller)
-			{
-				taller = itR->at(idx).first;
-				if (!itR->at(idx).second) {
-					++count;
-					itR->at(idx).second = true;
-				}
-			}
-		}
-	}
-	return	count;
-}
-
-int	countFromBottom(std::vector<std::vector<std::pair<short, bool> > > &grid)
-{
-	int																count = 0;
-	std::vector<std::vector<std::pair<short, bool> > >::reverse_iterator	endR(grid.rend());
-
-	for (int idx = 0; idx < grid[0].size(); ++idx) {
-		short	taller = -1;
-		for (std::vector<std::vector<std::pair<short, bool> > >::reverse_iterator itR(grid.rbegin()); itR != endR; ++itR)
-		{
-			if (taller == 9)
-				break;
-			if (itR->at(idx).first > taller)
-			{
-				taller = itR->at(idx).first;
-				if (!itR->at(idx).second) {
-					++count;
-					itR->at(idx).second = true;
-				}
-			}
-		}
-	}
-	return	count;
-}
-
-int	countFromLeft(std::vector<std::vector<std::pair<short, bool> > > &grid)
-{
-	int																count = 0;
-	std::vector<std::vector<std::pair<short, bool> > >::iterator	endR(grid.end());
-
-	for (std::vector<std::vector<std::pair<short, bool> > >::iterator itR(grid.begin()); itR != endR; ++itR)
+	int	count = 0;
+	int	compareTo = itR->at(idx);
+	for (std::vector<std::vector<short> >::const_reverse_iterator it(itR); it != grid.rend(); ++it)
 	{
-		short	taller = -1;
-		for (int idx = 0; idx < grid[0].size(); ++idx) {
-			if (taller == 9)
-				break;
-			if (itR->at(idx).first > taller)
-			{
-				taller = itR->at(idx).first;
-				if (!itR->at(idx).second) {
-					++count;
-					itR->at(idx).second = true;
-				}
-			}
-		}
+		++count;
+		if (it->at(idx) >= compareTo)
+			return (count);
 	}
-	return	count;
-}
-
-int	countFromRight(std::vector<std::vector<std::pair<short, bool> > > &grid)
-{
-	int																count = 0;
-	std::vector<std::vector<std::pair<short, bool> > >::iterator	endR(grid.end());
-
-	for (std::vector<std::vector<std::pair<short, bool> > >::iterator itR(grid.begin()); itR != endR; ++itR)
-	{
-		short	taller = -1;
-		for (int idx = grid[0].size() - 1; idx >= 0; --idx) {
-			if (taller == 9)
-				break;
-			if (itR->at(idx).first > taller)
-			{
-				taller = itR->at(idx).first;
-				if (!itR->at(idx).second) {
-					++count;
-					itR->at(idx).second = true;
-				}
-			}
-		}
-	}
-	return	count;
-}
-
-int	countVisibleTrees(std::vector<std::vector<std::pair<short, bool> > > &grid)
-{
-	int count = 0;
-
-	count += countFromTop(grid);
-	count += countFromRight(grid);
-	count += countFromBottom(grid);
-	count += countFromLeft(grid);
 	return (count);
+}
+
+int	downRange(std::vector<std::vector<short> >::const_iterator itR, int idx, const std::vector<std::vector<short> > &grid)
+{
+	int	count = 0;
+	int	compareTo = itR->at(idx);
+	for (std::vector<std::vector<short> >::const_iterator it(++itR); it != grid.end(); ++it)
+	{
+		++count;
+		if (it->at(idx) >= compareTo)
+			return (count);
+	}
+	return (count);
+}
+
+int	rightRange(std::vector<std::vector<short> >::const_iterator itR, int idx, const std::vector<std::vector<short> > &grid)
+{
+	int	count = 0;
+	int	compareTo = itR->at(idx);
+	for (int it = ++idx; it < grid[0].size(); ++it)
+	{
+		++count;
+		if (itR->at(it) >= compareTo)
+			return (count);
+	}
+	return (count);
+}
+
+int	leftRange(std::vector<std::vector<short> >::const_iterator itR, int idx)
+{
+	int	count = 0;
+	int	compareTo = itR->at(idx);
+	for (int it = --idx; it >= 0; --it)
+	{
+		++count;
+		if (itR->at(it) >= compareTo)
+			return (count);
+	}
+	return (count);
+}
+
+int	calculateView(std::vector<std::vector<short> >::const_iterator itR, int idx, const std::vector<std::vector<short> > &grid)
+{
+	int	up = upRange(itR, idx, grid);
+	if (!up)
+		return 0;
+	int	right = rightRange(itR, idx, grid);
+	if (!right)
+		return 0;
+	int	down = downRange(itR, idx, grid);
+	if (!down)
+		return 0;
+	int	left = leftRange(itR, idx);
+	return (up * right * down * left);
+}
+
+int	betterView(const std::vector<std::vector<short> > &grid)
+{
+	int betterView = 0;
+
+	std::vector<std::vector<short > >::const_iterator	endR(grid.end());
+	for (std::vector<std::vector<short> >::const_iterator itR(grid.begin()); itR != endR; ++itR)
+	{
+		for (int idx = 0; idx < grid[0].size(); ++idx)
+			betterView = std::max(betterView, calculateView(itR, idx, grid));
+	}
+	return (betterView);
 }
 
 int main(int ac, char **av)
@@ -119,19 +91,19 @@ int main(int ac, char **av)
 	if (input.fail())
 		return 1;
 
-	std::vector<std::vector<std::pair<short, bool> > >	grid;
+	std::vector<std::vector<short> >	grid;
 	std::string							line;
 	while (!input.eof())
 	{
-		std::vector<std::pair<short, bool > >	row;
+		std::vector<short>	row;
 		getline(input, line);
 		if (line.back() == 13) // carriage return deletion if it exists
 			line.erase(--line.end());
 		std::string::iterator end(line.end());
 		for (std::string::iterator it = line.begin(); it != end; ++it)
-			row.push_back(std::make_pair((*it) - '0', false));
+			row.push_back((*it) - '0');
 		grid.push_back(row);
 	}
-	std::cout << countVisibleTrees(grid) << '\n';
+	std::cout << betterView(grid) << '\n';
 	return (0);
 }
