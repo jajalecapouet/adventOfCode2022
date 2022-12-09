@@ -3,7 +3,6 @@
 #include <utility>
 #include <iostream>
 #include <fstream>
-#include <unistd.h>
 
 std::pair<int, int>	&operator+=(std::pair<int, int> &lhs, const std::pair<int, int> &rhs)
 {
@@ -61,7 +60,6 @@ std::pair<int, int> stickOnHead(const std::pair<int, int> &head, const std::pair
 
 void	executeMove(std::vector<std::pair<int, int> > &rope, std::pair<std::pair<int, int>, int> &move, std::set<std::pair<int, int> > &pathing)
 {
-	int	tool = move.second;
 	while (move.second--)
 	{
 		rope.front() += move.first;

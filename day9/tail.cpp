@@ -2,7 +2,6 @@
 #include <utility>
 #include <iostream>
 #include <fstream>
-#include <unistd.h>
 
 std::pair<int, int>	&operator+=(std::pair<int, int> &lhs, const std::pair<int, int> &rhs)
 {
