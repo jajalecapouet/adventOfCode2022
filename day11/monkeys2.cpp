@@ -37,7 +37,7 @@ class Monkey
 		{
 			for (rev_ite it = items.rbegin(); it != items.rend(); ++it)
 			{
-				*it %= 9699690; // to not let the number be ridiculuously big, I keep the rest of it by a division by 1 * 2 * 3 * 5 * 7 * 11 * 13 * 17 * 19.
+				*it %= 0x94016a; // to not let the number be ridiculously big, I keep the rest of it by a divide by 1 * 2 * 3 * 5 * 7 * 11 * 13 * 17 * 19.
 				++busyCount;
 				*it += add;
 				if (mult == 0)
