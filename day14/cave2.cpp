@@ -76,17 +76,19 @@ void	insertParsedLine(const std::vector<coord> &v, grid &g)
 	{
 		coord	a(v[i]);
 		coord	b(v[i + 1]);
-		coord	dxdy;
-		if (a.first - b.first < 0)
-			dxdy = std::make_pair(1, 0);
-		else if (a.first - b.first > 0)
-			dxdy = std::make_pair(-1, 0);
-		else if (a.second - b.second < 0)
-			dxdy = std::make_pair(0, 1);
-		else if (a.second - b.second > 0)
-			dxdy = std::make_pair(0, -1);
-		else
+		coord	dxdy(0, 0);
+		int dx = a.first - b.first;
+		int	dy = a.second - b.second;
+		if (dx && dy)
 			throw std::invalid_argument("rocks must be aligned\n");
+		if (dx < 0)
+			dxdy = coord(1, 0);
+		else if (dx > 0)
+			dxdy = coord(-1, 0);
+		else if (dy < 0)
+			dxdy = coord(0, 1);
+		else if (dy > 0)
+			dxdy = coord(0, -1);
 		while (a != b)
 		{
 			a += dxdy;
