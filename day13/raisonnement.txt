@@ -1,0 +1,21 @@
+MyTuple<int>    parseStr(str) :
+
+-   cas1 : vide : ""
+--> return MyTuple<int>();
+
+-   cas2 : pas de '[' ni de ',' : "123"
+--> return MyTuple<int>(stoi(str));
+
+-   cas3 : pas de ',' a l'exterieur : exemple : str = "[a, [b, c]]"
+--> si pas de ',' externes dans l'encapsulation de str :
+    --> deletion des '[' et ']' externes;
+    --> return MyTuple<int>(std::vector<MyTuple<int> >(1, parseStr(a, [b, c]));
+--> sinon
+    --> return parseStr(1, parseStr(a, [b, c]));
+
+-   cas4 : un ou des ',' a l'exterieur : "[a, b], c, [d]"
+--> indexage des ',' exterieures;
+--> std::vector<MyTuple<int> > ret;
+--> entre chaque indexes [idx[i], idx[i + 1]]
+    --> ret.push_back(parseStr(str.substr(idx[i], idx[i + 1] - idx[i])));
+--> return MyTuple(ret);
