@@ -4,3 +4,4 @@ My solvers are used to be more optimized for the machine and modular than fast a
 
 Tasks :
 - day12 : replace multimap<int, Node*> by map<std::pair<int, coord>, Node*> to get highly better performance
+- day13 : stock MyTuple container in personnal library and rename it like "MyTree"

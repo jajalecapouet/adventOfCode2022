@@ -112,8 +112,8 @@ public :
 
 	bool operator<=(const MyTuple &other) const
 	{
-		MyTuple<int>	thisCpy(*this);
-		MyTuple<int>	otherCpy(other);
+		MyTuple	thisCpy(*this);
+		MyTuple	otherCpy(other);
 		if (thisCpy.compareTuples(otherCpy) == -1)
 			return false;
 		return true;
