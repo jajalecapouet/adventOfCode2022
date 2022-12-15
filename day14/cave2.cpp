@@ -97,7 +97,7 @@ void	insertParsedLine(const std::vector<coord> &v, grid &g)
 	}
 }
 
-void setGround(grid &c)
+`void setGround(grid &c)
 {
 	for (grid::size_type i = c.size() - 1; i >= 0; --i)
 	{
@@ -110,7 +110,7 @@ void setGround(grid &c)
 			break;
 		}
 	}
-}
+}`
 
 void pourTheSand(grid &c)
 {
