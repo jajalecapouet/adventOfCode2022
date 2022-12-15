@@ -90,7 +90,7 @@ std::ostream &operator<<(std::ostream &o, const std::vector<Circle> &v)
 	return o;
 }
 
-Circle	parseLine(const std::string &line, std::set<coord> &ySortedbeacons)
+Circle	parseLine(const std::string &line)
 {
 	std::string::size_type idx1 = line.find("x=");
 	std::string::size_type idx2 = line.find("y=");
@@ -103,8 +103,6 @@ Circle	parseLine(const std::string &line, std::set<coord> &ySortedbeacons)
 
 	coord	a(atoi(&line[idx1 + 2]), atoi(&line[idx2 + 2]));
 	coord	b(atoi(&line[idx3 + 2]), atoi(&line[idx4 + 2]));
-	coord	c(b.second, b.first);
-	ySortedbeacons.insert(c);
 	return (Circle(a, b));
 }
 
@@ -175,46 +173,45 @@ int main(int ac, char **av)
 	std::ostream out(&fb);
 
 	std::vector<Circle>	circles;
-	std::set<coord>		ySortedBeacons;
 	while (!input.eof())
 	{
 		getline(input, line);
 		if (line.back() == 13) line.erase(--line.end());
-		circles.push_back(parseLine(line, ySortedBeacons));
+		circles.push_back(parseLine(line));
 	}
 	out << circles;
-	int xMin = getMinX(circles);
-	int xMax = getMaxX(circles);
-	std::cout << "range [" << xMin << ',' << xMax << "]\n";
-	int count = 0;
-	int y = atoi(av[2]);
+	int getSize = atoi(av[2]);
+	int xMin = 0;
+	int xMax = getSize;
+	int yMin = 0;
+	int yMax = getSize;
 
-	for (int x = xMin; x <= xMax; ++x)
-	{
-		std::set<int>	leftBorders;
-		bool found = false;
-		for (std::vector<Circle>::const_iterator cit = circles.begin(); cit != circles.end(); ++cit)
-		{
-			coord	xy(x, y);
-			if (cit->coordInCircle(xy))
-			{
-				int nextX = cit->giveRightBorderX(xy);
-				count += (nextX - x + 1);
-				count -= beaconsInRange(xy, nextX - x, ySortedBeacons);
-				x = nextX;
-				found = true;
-				break;
+	for (int y = yMin; y <= yMax; ++y) {
+		for (int x = xMin; x <= xMax; ++x) {
+			bool found = false;
+			for (std::vector<Circle>::const_iterator cit = circles.begin(); cit != circles.end(); ++cit) {
+				coord xy(x, y);
+				if (cit->coordInCircle(xy)) {
+					x = cit->giveRightBorderX(xy);
+					found = true;
+					break;
+				}
 			}
-			std::pair<bool, int>	result = cit->giveLeftBorderX(xy);
-			if (result.first)
-				leftBorders.insert(result.second);
+			if (!found)
+			{
+				int result = 4 * x;
+				if (!(result % 10))
+				{
+					std::cout << result / 10 << y << '\n';
+					std::cout << "if previous number don't work for you, try this one :\n";
+					std::cout << result << "000000 + " << y << '\n';
+				}
+				else
+					std::cout << result << y << '\n';
+				return 0;
+			}
 		}
-		if (!found && leftBorders.empty())
-			break;
-		if (!found)
-			x = *leftBorders.begin() - 1;
 	}
 
-	std::cout << count << '\n';
 	return 0;
 }
