@@ -198,7 +198,7 @@ int calcPressure(const maze &maze)
 	return pressure;
 }
 
-bool canDoBetter(const maze &maze, int best, Node *n, int time)
+bool canDoBetter(const maze &maze, int best, int time)
 {
 	int better = calcPressure(maze);
 	std::multiset<int>	valves;
@@ -211,31 +211,88 @@ bool canDoBetter(const maze &maze, int best, Node *n, int time)
 	while (time >= 0 && crit != valves.rend())
 	{
 		better += time * *crit;
-		time -= 3;
 		++crit;
+		better += time * *crit;
+		++crit;
+		time -= 3;
 	}
 	return (better > best);
 }
 
-void doTheSims(maze &maze, Node *pos, int time, int &simReport)
+void doTheSims(maze &maze, Node *pos1, Node *pos2, int time1, int time2, int time, int &simReport)
 {
-	if (time <= 0)
-		simReport = std::max(simReport, calcPressure(maze));
-	else
-	{
-		if (pos->_time == 0) {
-			--time;
-			pos->_time = time;
-			for (Node::children::iterator it = pos->_children.begin(); it != pos->_children.end(); ++it) {
-				if (canDoBetter(maze, simReport, it->first, time - it->second))
-					doTheSims(maze, it->first, time - it->second, simReport);
-			}
-			pos->_time = 0;
-			++time;
+	if (time <= 0) {
+		int result = calcPressure(maze);
+		if (result > simReport) {
+			std::cerr << result << '\n';
+			simReport = result;
 		}
-		for (Node::children::iterator it = pos->_children.begin(); it != pos->_children.end(); ++it) {
-			if (canDoBetter(maze, simReport, it->first, time - it->second))
-				doTheSims(maze, it->first, time - it->second, simReport);
+		//simReport = std::max(simReport, calcPressure(maze));
+	}
+	else if (time1 && time2)
+	{
+		int	timeSpend = std::min(time1, time2);
+		doTheSims(maze, pos1, pos2, time1 - timeSpend, time2 - timeSpend, time - timeSpend, simReport);
+	}
+	else if (!time1 && time2)
+	{
+		if (pos1->_time == 0)
+		{
+			pos1->_time = time - 1;
+			doTheSims(maze, pos1, pos2, 0, time2 - 1, time - 1, simReport);
+			pos1->_time = 0;
+		}
+		for (Node::children::iterator it = pos1->_children.begin(); it != pos1->_children.end(); ++it)
+		{
+			if (canDoBetter(maze, simReport, time - 1))
+				doTheSims(maze, it->first, pos2, it->second - 1, time2 - 1, time - 1, simReport);
+		}
+	}
+	else if (time1 && !time2)
+	{
+		if (pos2->_time == 0)
+		{
+			pos2->_time = time - 1;
+			doTheSims(maze, pos1, pos2, time1 - 1, 0, time - 1, simReport);
+			pos2->_time = 0;
+		}
+		for (Node::children::iterator it = pos2->_children.begin(); it != pos2->_children.end(); ++it)
+		{
+			if (canDoBetter(maze, simReport, time - 1))
+				doTheSims(maze, pos1, it->first, time1 - 1, it->second - 1, time - 1, simReport);
+		}
+	}
+	else {
+		if (pos1->_time == 0 && pos2->_time == 0 && pos1 != pos2) {
+			pos1->_time = time - 1;
+			pos2->_time = time - 1;
+			doTheSims(maze, pos1, pos2, 0, 0, time - 1, simReport);
+			pos1->_time = 0;
+			pos2->_time = 0;
+		}
+		if (pos1->_time == 0 && pos1 != pos2) {
+			pos1->_time = time - 1;
+			for (Node::children::iterator it = pos2->_children.begin(); it != pos2->_children.end(); ++it) {
+				if (canDoBetter(maze, simReport, time - 1))
+					doTheSims(maze, pos1, it->first, 0, it->second - 1, time - 1, simReport);
+			}
+			pos1->_time = 0;
+		}
+		if (pos2->_time == 0) {
+			pos2->_time = time - 1;
+			for (Node::children::iterator it = pos1->_children.begin(); it != pos1->_children.end(); ++it) {
+				if (canDoBetter(maze, simReport, time - 1))
+					doTheSims(maze, it->first, pos2, it->second - 1, 0, time - 1, simReport);
+			}
+			pos2->_time = 0;
+		}
+		for (Node::children::iterator it1 = pos1->_children.begin(); it1 != pos1->_children.end(); ++it1)
+		{
+			for (Node::children::iterator it2 = pos2->_children.begin(); it2 != pos2->_children.end(); ++it2)
+			{
+				if (canDoBetter(maze, simReport, time - std::min(it1->second, it2->second)))
+					doTheSims(maze, it1->first, it2->first, it1->second - 1, it2->second - 1, time - 1, simReport);
+			}
 		}
 	}
 }
@@ -262,8 +319,9 @@ int	main(int ac, char **av)
 	out << "simplified maze : \n" << maze;
 	fb.close();
 	int	simReport = 0;
-	doTheSims(maze, maze.begin()->second, 30, simReport);
-	std::cout << "best pressure is " << simReport << '\n';
+	doTheSims(maze, maze.begin()->second, maze.begin()->second, 0, 0, 26, simReport);
+	std::cout << simReport << '\n';
+	std::cout << "2206 is too low\n";
 	for (iterator it = maze.begin(); it != maze.end(); ++it)
 		delete it->second;
 	return 0;
