@@ -321,7 +321,6 @@ int	main(int ac, char **av)
 	int	simReport = 0;
 	doTheSims(maze, maze.begin()->second, maze.begin()->second, 0, 0, 26, simReport);
 	std::cout << simReport << '\n';
-	std::cout << "2206 is too low\n";
 	for (iterator it = maze.begin(); it != maze.end(); ++it)
 		delete it->second;
 	return 0;
