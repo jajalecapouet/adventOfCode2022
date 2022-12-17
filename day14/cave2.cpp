@@ -2,7 +2,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <map>
 #include <algorithm>
 #include <exception>
 
@@ -97,7 +96,7 @@ void	insertParsedLine(const std::vector<coord> &v, grid &g)
 	}
 }
 
-`void setGround(grid &c)
+void setGround(grid &c)
 {
 	for (grid::size_type i = c.size() - 1; i >= 0; --i)
 	{
@@ -110,7 +109,7 @@ void	insertParsedLine(const std::vector<coord> &v, grid &g)
 			break;
 		}
 	}
-}`
+}
 
 void pourTheSand(grid &c)
 {
