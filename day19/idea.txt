@@ -1,0 +1,32 @@
+soit X(0->t) = nbr de géodes ouvertes a tout les moment entre 0 et t
+
+0->t = somme des evenements 0 + 1 + ... + t-1 + t
+
+X(0->t) = X(1) + X(2) + ... + X(t-1) + X(t)
+
+X(t) = nbr de geodes ouverte a un moment t
+
+but : connaitre max(X(0->t))
+
+= connaitre max(X(1) + X(2) + ... + X(t))
+
+---------------------
+Propriétés évidentes :
+
+* A un moment n, X(n) = nbr de robot geodes
+* X(0) = 0
+* X(n-1) <= X(n)
+* X(n) < X(n-1) + 2
+* X(n) <= n
+
+Idee :
+0 <= max(X(0->t)) <= 0 + 1 + 2 + ... + t-1 + t
+
+---------------------
+
+on ne peut creer que 1 robot par tour.
+
+on peut brute force en decidant a chaque recurrence quel est
+le prochain robot qui va etre construit (selon les ressources que
+l'on peut deja avoir car on ne peut construit un robot geode si on
+n'a pas au moins un robot obsidienne)

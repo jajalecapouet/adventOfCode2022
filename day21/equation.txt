@@ -1,0 +1,30 @@
+a = x + b
+=> x = a - b
+
+a = x - b
+=> x = a + b
+
+a = x * b
+=> x = a / b
+
+a = x / b
+=> x = a * b
+
+-----------------
+
+a = b + x
+=> a = x + b
+=> x = a - b
+
+a = b - x
+=> a = -x + b
+=> -x = a - b
+=> x = b - a
+
+a = b * x
+=> a = x * b
+=> x = a / b
+
+a = b / x
+=> a * x = b
+=> x = b / a
