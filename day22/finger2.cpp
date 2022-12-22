@@ -420,7 +420,6 @@ public:
 
 	void exe()
 	{
-		int i = 1;
 		for (std::list<Command>::const_iterator cit = _cmd.begin(); cit != _cmd.end(); ++cit)
 		{
 			if (cit->turn())
