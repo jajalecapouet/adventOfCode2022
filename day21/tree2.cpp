@@ -2,7 +2,6 @@
 #include <fstream>
 #include <map>
 #include <ctype.h>
-#include <cstdint>
 
 #define PLUS 0;
 #define MINUS 1;

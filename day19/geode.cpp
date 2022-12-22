@@ -131,16 +131,57 @@ public :
 	void passTime(int time)
 	{
 		_t -= time;
-		_ore += (time - 1) * _robotOre;
-		_clay += (time - 1) * _robotClay;
-		_obs += (time - 1) * _robotObs;
-		_geo += (time - 1) * _robotGeo;
+		_ore += time * _robotOre;
+		_clay += time * _robotClay;
+		_obs += time * _robotObs;
+		_geo += time * _robotGeo;
+	}
+
+	void buildRobot(int robot)
+	{
+		switch (robot)
+		{
+			case 1:
+				_robotOre += 1;
+				break;
+			case 2:
+				_robotClay += 1;
+				break;
+			case 3:
+				_robotObs += 1;
+				break;
+			default :
+				_robotGeo += 1;
+		}
+	}
+
+	void destroyRobot(int robot)
+	{
+		switch (robot)
+		{
+			case 1:
+				_robotOre -= 1;
+				break;
+			case 2:
+				_robotClay -= 1;
+				break;
+			case 3:
+				_robotObs -= 1;
+				break;
+			default :
+				_robotGeo -= 1;
+		}
 	}
 
 	int canDoOre()	const
 	{
-		if (_t <= 0) return (-1);
-		if (_robotOre >= _b.clayRobotCompo.ore && _robotOre >= _b.obsidianRobotCompo.ore && _robotOre >= _b.geodeRobotCompo.ore)
+		if (_t == 1) return (-1);
+		/*if ((_robotOre >= _b.clayRobotCompo.ore || _robotClay >= _b.obsidianRobotCompo.clay || _robotObs >= _b.geodeRobotCompo.obsidian) &&
+			(_robotOre >= _b.obsidianRobotCompo.ore || _robotObs >= _b.geodeRobotCompo.obsidian) &&
+			_robotOre >= _b.geodeRobotCompo.ore)
+			return (-1);*/
+		if ((_robotObs >= _b.geodeRobotCompo.obsidian || ((_robotOre >= _b.clayRobotCompo.ore || _robotClay >= _b.obsidianRobotCompo.clay &&
+			_robotOre >= _b.obsidianRobotCompo.ore))) && _robotOre >= _b.geodeRobotCompo.ore)
 			return (-1);
 		if (Compo(_ore, 0, 0) >= _b.oreRobotCompo) return (0);
 		int timeToGet = ((_b.oreRobotCompo.ore - _ore) / _robotOre);
@@ -153,8 +194,8 @@ public :
 
 	int canDoClay()	const
 	{
-		if (_t <= 0) return (-1);
-		if (_robotClay >= _b.obsidianRobotCompo.clay)
+		if (_t == 1) return (-1);
+		if (_robotClay >= _b.obsidianRobotCompo.clay || _robotObs >= _b.geodeRobotCompo.obsidian)
 			return (-1);
 		if (Compo(_ore, 0, 0) >= _b.clayRobotCompo) return (0);
 		int timeToGet = ((_b.clayRobotCompo.ore - _ore) / _robotOre);
@@ -167,7 +208,7 @@ public :
 
 	int	canDoObs()	const
 	{
-		if (_t <= 0) return (-1);
+		if (_t == 1) return (-1);
 		if (_robotObs >= _b.geodeRobotCompo.obsidian || !_robotClay)
 			return (-1);
 		if (Compo(_ore, _clay, 0) >= _b.obsidianRobotCompo) return (0);
@@ -189,7 +230,7 @@ public :
 
 	int canDoGeo()	const
 	{
-		if (_t <= 0) return (-1);
+		if (_t == 1) return (-1);
 		if (!_robotObs)
 			return (-1);
 		if (Compo(_ore, 0, _obs) >= _b.geodeRobotCompo) return (0);
@@ -211,67 +252,57 @@ public :
 
 };
 
-void stupidForce(const Sim &sim, int &result) {
+void stupidForce(Sim &sim, int &result);
+void recursive(Sim &sim, int &result, int time, int robot)
+{
+	sim.passTime(time);
+	sim.buildRobot(robot);
+	stupidForce(sim, result);
+	sim.passTime(- (time));
+	sim.destroyRobot(robot);
+}
+
+void stupidForce(Sim &sim, int &result) {
 	if (sim._t < 0)
 	{
-		std::cout << "out of bound\n";
-		return;
+		std::cout << "erreur\n";
+		return ;
 	}
-	if (!sim._t) {
-		if (sim._geo + sim._robotGeo > result) {
-			std::cout << sim._geo + sim._robotGeo << '\n';
-			result = sim._geo + sim._robotGeo;
-		}
-	} else {
-		Sim sam(sim);
-		sam._ore += sam._robotOre;
-		sam._clay += sam._robotClay;
-		sam._obs += sam._robotObs;
-		sam._geo += sam._robotGeo;
-		int doOre = sam.canDoOre();
-		int	doClay = sam.canDoClay();
-		int doObs = sam.canDoObs();
-		int doGeo = sam.canDoGeo();
-		if (doOre != -1)
+	if (sim._t == 0)
+	{
+		if (sim._geo > result)
 		{
-			Sim sum(sam);
-			sum.passTime(doOre);
-			sum._robotOre += 1;
-			sum._t -= 1;
-			stupidForce(sum, result);
+			result = sim._geo;
+			std::cout << result << '\n';
 		}
-		if (doClay != -1)
-		{
-			Sim sum(sam);
-			sum.passTime(doClay);
-			sum._robotClay += 1;
-			sum._t -= 1;
-			stupidForce(sum, result);
-		}
-		if (doObs != -1)
-		{
-			Sim sum(sam);
-			sum.passTime(doObs);
-			sum._robotObs += 1;
-			sum._t -= 1;
-			stupidForce(sum, result);
-		}
-		if (doGeo != -1)
-		{
-			Sim sum(sam);
-			sum.passTime(doGeo);
-			sum._robotGeo += 1;
-			sum._t -= 1;
-			stupidForce(sum, result);
-		}
-		if (doOre == -1 && doClay == -1 && doObs == -1 && doGeo == -1)
-		{
-			sam._geo += (sam._t - 1) * sam._robotGeo;
-			sam._t = 0;
-			stupidForce(sam, result);
-		}
+		return ;
+	}
+	int doOre = sim.canDoOre();
+	int doClay = sim.canDoClay();
+	int	doObs = sim.canDoObs();
+	int doGeo = sim.canDoGeo();
+	if (sim._t == 24)
+	{
+		std::cout << "doOre = " << doOre << '\n';
+		std::cout << "doClay = " << doClay << '\n';
+		std::cout << "doObs = " << doObs << '\n';
+		std::cout << "doGeo = " << doGeo << '\n';
+	}
+	if (doOre != -1)
+		recursive(sim, result, doOre, 1);
+	if (doClay != -1)
+		recursive(sim, result, doClay, 2);
+	if (doObs != -1)
+		recursive(sim, result, doObs, 3);
+	if (doGeo != -1)
+		recursive(sim, result, doObs, 4);
+	if (doOre == -1 && doClay == -1 && doObs == -1 && doGeo == -1)
+	{
+		sim.passTime(sim._t);
+		stupidForce(sim, result);
 	}
 }
+
 std::ostream &operator<<(std::ostream &o, const Blueprint &b)
 {
 	o << "\tOre robot compo : " << b.oreRobotCompo;
@@ -377,7 +408,7 @@ int main(int ac, char **av)
 		parseLines(std::vector<std::string>(1, line), book);
 	int	result = 0;
 	int idx = 1;
-	std::cout << book << "\n\n";
+//	std::cout << book << "\n\n";
 	for (std::vector<Blueprint>::const_iterator cit = book.begin(); cit != book.end(); ++cit)
 	{
 		result += (idx * cit->BestAmountOfGeodeInTime(time));

@@ -1,0 +1,47 @@
+cube : 6 faces
+
+11 patrons possible.
+
+on patron,  each diagonal squares are touched each other in the formed cube
+            each touched squares are touched each other in the formed cube
+            if a square has 2 distance from another without turning, they don't touch
+            if a square has 4 distance from another with only turning, they don't touch
+
+absurd case : 2 squares having 3 distance right forward is impossible in a cube
+
+
+My patron is like :
+
+        1 1 1 1 2 2 2 2
+        1 1 1 1 2 2 2 2
+        1 1 1 1 2 2 2 2
+        1 1 1 1 2 2 2 2
+        3 3 3 3
+        3 3 3 3
+        3 3 3 3
+        3 3 3 3
+5 5 5 5 4 4 4 4
+5 5 5 5 4 4 4 4
+5 5 5 5 4 4 4 4
+5 5 5 5 4 4 4 4
+6 6 6 6
+6 6 6 6
+6 6 6 6
+6 6 6 6
+
+200 x 150
+
+test is 12 x 16
+
+                1 1 1 1
+                1 1 1 1
+                1 1 1 1
+                1 1 1 1
+2 2 2 2 3 3 3 3 4 4 4 4
+2 2 2 2 3 3 3 3 4 4 4 4
+2 2 2 2 3 3 3 3 4 4 4 4
+2 2 2 2 3 3 3 3 4 4 4 4
+                5 5 5 5 6 6 6 6
+                5 5 5 5 6 6 6 6
+                5 5 5 5 6 6 6 6
+                5 5 5 5 6 6 6 6
