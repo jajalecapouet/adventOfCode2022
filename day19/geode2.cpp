@@ -518,12 +518,14 @@ int main(int ac, char **av)
 	}
 	if (!line.empty() && line.front() == 'B')
 		parseLines(std::vector<std::string>(1, line), book);
-	int	result = 0;
-	int idx = 1;
+	int	result = 1;
+	int idx = 0;
 	//std::cout << book << "\n\n";
 	for (std::vector<Blueprint>::const_iterator cit = book.begin(); cit != book.end(); ++cit)
 	{
-		result += idx++ * cit->BestAmountOfGeodeInTime(time);
+		if (idx++ == 3)
+			break;
+		result *= cit->BestAmountOfGeodeInTime(time);
 	}
 	std::cout << result << " is result\n";
 	return 0;
