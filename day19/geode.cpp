@@ -257,15 +257,17 @@ void recursive(Sim &sim, int &result, int time, int robot)
 {
 	sim.passTime(time);
 	sim.buildRobot(robot);
+	sim.passTime(1);
 	stupidForce(sim, result);
-	sim.passTime(- (time));
+	sim.passTime(-1);
 	sim.destroyRobot(robot);
+	sim.passTime(-time);
 }
 
 void stupidForce(Sim &sim, int &result) {
 	if (sim._t < 0)
 	{
-		std::cout << "erreur\n";
+		std::cout << "error\n";
 		return ;
 	}
 	if (sim._t == 0)
@@ -380,7 +382,7 @@ int main(int ac, char **av)
 	std::ifstream input(av[1]);
 	if (input.fail())
 	{
-		std::cerr << "intput fail.\n";
+		std::cerr << "input fail.\n";
 		return 1;
 	}
 	int	time = atoi(av[2]);

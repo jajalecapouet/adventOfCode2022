@@ -16,7 +16,7 @@ typedef std::pair<int, int>	coord;
 
 
 template< class T >
-struct coordCmp : std::binary_function<T, T, bool> // I don't know why std::less can't do the work, but whatever...
+struct coordCmp : std::binary_function<T, T, bool>
 {
 	bool operator() (const T& x, const T& y) const {
 		if (x.second == y.second)
@@ -798,5 +798,7 @@ int main(int ac, char **av)
 	Finger	douah(facesLocation, cmd);
 	douah.exe();
 	std::cout << douah.returnResult() << " is result.\n";
+	for (Loc::iterator it = facesLocation.begin(); it != facesLocation.end(); ++it)
+		delete it->second;
 	return 0;
 }
