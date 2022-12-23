@@ -24,9 +24,16 @@ Idee :
 
 ---------------------
 
-on ne peut creer que 1 robot par tour.
+Without math idea :
 
-on peut brute force en decidant a chaque recurrence quel est
-le prochain robot qui va etre construit (selon les ressources que
-l'on peut deja avoir car on ne peut construit un robot geode si on
-n'a pas au moins un robot obsidienne)
+We only can do 1 robot maximum each turn.
+
+So I can bruteforce on the choice of what will be the next robot I'll build.
+
+each turn : do all those possible choices :
+	- wait until I can build robotOre
+	- wait until I can build robotClay
+	- wait until I can build robotObsidian
+	- wait until I can build robotGeode
+
+Any choice can be ignored if it is impossible or absurd.
