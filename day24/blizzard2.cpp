@@ -318,6 +318,53 @@ public :
 		return *this;
 	}
 
+	void	invertedDnf(unsigned int &result, visited &v, Sim &newStart) const
+	{
+		if (_isKnown(v))
+			return;
+		if (_turn + ManhattanDist(_Gilberte, _endPoint) >= result)
+			return ;
+		if (_Gilberte == _endPoint)
+		{
+			result = _turn;
+			std::cout << result << '\n';
+			newStart = *this;
+			return ;
+		}
+
+		Sim cpy(*this);
+		cpy._timeUp(_g);
+		int possibilities = cpy._checkAround();
+		if (!possibilities)
+			return;
+		if (possibilities & 4)
+		{
+			cpy._Gilberte += coord(-1, 0);
+			cpy.invertedDnf(result, v, newStart);
+			cpy._Gilberte -= coord(-1, 0);
+		}
+		if (possibilities & 8)
+		{
+			cpy._Gilberte += coord(0, -1);
+			cpy.invertedDnf(result, v, newStart);
+			cpy._Gilberte -= coord(0, -1);
+		}
+		if (possibilities & 1)
+		{
+			cpy._Gilberte += coord(1, 0);
+			cpy.invertedDnf(result, v, newStart);
+			cpy._Gilberte -= coord(1, 0);
+		}
+		if (possibilities & 2)
+		{
+			cpy._Gilberte += coord(0, 1);
+			cpy.invertedDnf(result, v, newStart);
+			cpy._Gilberte -= coord(0, 1);
+		}
+		if (possibilities & 16)
+			cpy.invertedDnf(result, v, newStart);
+	}
+
 	void	dnf(unsigned int &result, visited &v, Sim &newStart) const
 	{
 		if (_isKnown(v))
@@ -367,20 +414,20 @@ public :
 
 	unsigned int exe()	const
 	{
-		unsigned int	result = 3000;
+		unsigned int	result = 300;
 		unsigned int	totalResult = 0;
 		visited v;
 		Sim	newStart;
 		dnf(result, v, newStart);
 		totalResult += result;
 		std::cout << "totalResult = " << totalResult << " start and end : " << newStart._startPoint << ' ' << newStart._endPoint << '\n';
-		result = 3000;
+		result = 300;
 		v.clear();
 		Sim newStart2;
-		newStart.dnf(result, v, newStart2);
+		newStart.invertedDnf(result, v, newStart2);
 		totalResult += result;
 		std::cout << "totalResult = " << totalResult << '\n';
-		result = 3000;
+		result = 300;
 		v.clear();
 		newStart2.dnf(result, v, newStart);
 		totalResult += result;
