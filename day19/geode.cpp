@@ -190,8 +190,8 @@ public :
 
 	int canDoOre()	const
 	{
-		if ((_robotObs >= _b.geodeRobotCompo.obsidian || ((_robotOre >= _b.clayRobotCompo.ore || _robotClay >= _b.obsidianRobotCompo.clay &&
-			_robotOre >= _b.obsidianRobotCompo.ore))) && _robotOre >= _b.geodeRobotCompo.ore)
+		if ((_robotObs >= _b.geodeRobotCompo.obsidian || ((_robotOre >= _b.clayRobotCompo.ore || (_robotClay >= _b.obsidianRobotCompo.clay &&
+			_robotOre >= _b.obsidianRobotCompo.ore)))) && _robotOre >= _b.geodeRobotCompo.ore)
 			return (-1);
 		if (Compo(_ore, 0, 0) >= _b.oreRobotCompo) return (0);
 		int timeToGet = ((_b.oreRobotCompo.ore - _ore) / _robotOre);
